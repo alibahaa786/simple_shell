@@ -3,40 +3,31 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
+#include "main.h"
 
-int main() {
-  size_t size = 1024;
-  pid_t pid;
-  int status;
-  char *command;
-  char **argv;
+/**
+ * main - main shell
+ * Return: 0 on success
+*/
 
-  command = malloc(sizeof (char *));
-  argv = malloc(sizeof(char *) * 3);
-  argv[0] = NULL;
+int main(void)
+{
+	char **command;
+	pid_t pid;
+	int status;
 
-  while (1) {
-    printf("#cisfun$ ");
-    getline(&command, &size, stdin);
-
-    if (strcmp(command, "exit") == 0) {
-      break;
-    }
-
-    argv[0] = command;
-    pid = fork();
-    if (pid) {
-      wait(&status);
-    } else {
-      execve(command, argv, NULL);
-    }
-  }
-
-  for (int i = 0; i < 3; i++) {
-    free(argv[i]);
-  }
-
-  free(argv);
-
-  return 0;
+	while (!feof(stdin))
+	{
+		printf("#cisfun$ ");
+		command = get_command();
+		pid = fork();
+		if (pid)
+			wait(&status);
+		else
+		{
+			if (execve(command[0], command, NULL) < 0)
+				printf("No such file or directory\n");
+		}
+	}
+	return (0);
 }

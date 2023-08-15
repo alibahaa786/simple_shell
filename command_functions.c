@@ -21,12 +21,12 @@ char **get_command(void)
 	if (!fcommand)
 		return (NULL);
 	getline(&fcommand, &size, stdin);
-	fcommand[strlen(fcommand)-1] = '\0';
+	fcommand[strlen(fcommand) - 1] = '\0';
 	command = malloc(sizeof(char *) * 1024);
 	if (!command)
 		return (NULL);
 	command[0] = strtok(fcommand, " ");
-	for (i = 1;;i++)
+	for (i = 1; ; i++)
 	{
 		command[i] =  strtok(NULL, " ");
 		if (!command[i])
