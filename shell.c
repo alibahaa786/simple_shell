@@ -15,14 +15,21 @@ int main(void)
 	char **command;
 	pid_t pid;
 	int status;
-	char *full_path;
+	char **path = get_path();
+	extern char **environ;
+	int builtin;
 
 	while (!feof(stdin))
 	{
 		printf("#cisfun$ ");
 		command = get_command();
-		full_path = which(command[0]);
-		if (!full_path)
+		builtin = builtin_commands(command[0], environ);
+		if (builtin < 0)
+			break;
+		else if (builtin > 0)
+			continue;
+		command[0] = which(command[0], path);
+		if (!command[0])
 		{
 			printf("Could not find command: %s\n", command[0]);
 			continue;
