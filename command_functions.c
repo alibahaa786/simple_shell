@@ -34,3 +34,36 @@ char **get_command(void)
 	}
 	return (command);
 }
+
+/**
+ * this function to get the path without using /bin
+*/
+
+char *which(const char *command)
+{
+    char *path = getenv("PATH");
+    char *full_path = NULL;
+    char *token;
+    char *delim = ":";
+
+    if (!path)
+        return NULL;
+
+    token = strtok(path, delim);
+    while (token)
+    {
+ 	full_path = malloc(strlen(token) + strlen(command) + 2);
+        if (!full_path)
+            return NULL;
+
+        sprintf(full_path, "%s/%s", token, command);
+        if (access(full_path, X_OK) == 0)
+            return full_path;
+
+
+        free(full_path);
+        token = strtok(NULL, delim);
+    }
+
+    return NULL;
+}
