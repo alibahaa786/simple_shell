@@ -46,8 +46,10 @@ int main(int ac, char **av, char **env)
 		else
 		{
 			if (execve(full_path, command, NULL) < 0)
-				printf("No such file or directory\n");
+				printf("%s: No such file or directory\n", av[0]);
 		}
+		free(command);
 	}
+	free(path);
 	return (0);
 }
