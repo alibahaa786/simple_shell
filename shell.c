@@ -21,13 +21,19 @@ int main(int ac, char **av, char **env)
 	char **path = get_path();
 	char *full_path;
 	int builtin;
+	int error;
 
 	if (!ac)
 	{
 	}
+	if (!isatty(STDIN_FILENO))
+		printf("$ ");
 	do {
-		printf("#cisfun$ ");
+		if (isatty(STDIN_FILENO))
+			printf("$ ");
 		command = get_command();
+		if (!isatty(STDIN_FILENO) && (command[0][0] == 127 || command[0][0] <= 31) )
+			 break;
 		builtin = builtin_commands(command[0], env);
 		if (builtin < 0)
 			break;
@@ -44,11 +50,12 @@ int main(int ac, char **av, char **env)
 			wait(&status);
 		else
 		{
-			if (execve(full_path, command, NULL) < 0)
-				printf("%s: No such file or directory\n", av[0]);
-		}
+			error = execve(full_path, command, NULL);
+                        if (error < 0)
+                                printf("%s: No such file or directory\n", av[0]);
+                }
 		free(command);
-	} while (!feof(stdin) && isatty(STDIN_FILENO));
+	}while (!feof(stdin));
 	free(path);
-	return (0);
+	return (error);
 }
