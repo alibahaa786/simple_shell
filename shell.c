@@ -7,31 +7,37 @@
 
 /**
  * main - main shell
+ * @ac: number of arguments
+ * @av: array of arguments
+ * @env: environment
  * Return: 0 on success
 */
 
-int main(void)
+int main(int ac, char **av, char **env)
 {
 	char **command;
 	pid_t pid;
 	int status;
 	char **path = get_path();
-	extern char **environ;
+	char *full_path;
 	int builtin;
 
+	if (!ac)
+	{
+	}
 	while (!feof(stdin))
 	{
 		printf("#cisfun$ ");
 		command = get_command();
-		builtin = builtin_commands(command[0], environ);
+		builtin = builtin_commands(command[0], env);
 		if (builtin < 0)
 			break;
 		else if (builtin > 0)
 			continue;
-		command[0] = which(command[0], path);
-		if (!command[0])
+		full_path = which(command[0], path);
+		if (!full_path)
 		{
-			printf("Could not find command: %s\n", command[0]);
+			printf("%s: %s: not found\n", av[0], command[0]);
 			continue;
 		}
 		pid = fork();
@@ -39,7 +45,7 @@ int main(void)
 			wait(&status);
 		else
 		{
-			if (execve(command[0], command, NULL) < 0)
+			if (execve(full_path, command, NULL) < 0)
 				printf("No such file or directory\n");
 		}
 	}
