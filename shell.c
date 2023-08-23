@@ -27,8 +27,7 @@ int main(int ac, char **av, char **env)
 	}
 	do
 	{
-		if (isatty(STDIN_FILENO))
-			printf("#cisfun$ ");
+		printf("#cisfun$ ");
 		command = get_command();
 		builtin = builtin_commands(command[0], env);
 		if (builtin < 0)
