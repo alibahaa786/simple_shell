@@ -25,8 +25,7 @@ int main(int ac, char **av, char **env)
 	if (!ac)
 	{
 	}
-	do
-	{
+	do {
 		printf("#cisfun$ ");
 		command = get_command();
 		builtin = builtin_commands(command[0], env);
